@@ -1,11 +1,13 @@
 require('dotenv').config()
-var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+var DB = require('./config/db')
+
 var usersRouter = require('./routes/users');
+var authRouter = require('./routes/auth');
 
 var app = express();
 
@@ -16,6 +18,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'build')));
 
 app.use('/users', usersRouter);
+app.use('/auth', authRouter);
 
 app.get('*', function (req, res) {
     res.sendFile(path.join(__dirname, 'build/index.html'))
