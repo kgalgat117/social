@@ -1,94 +1,131 @@
 var tokenModel = require('./tokens')
 var clientModel = require('./clients')
 var userModel = require('./users')
-var authCodeModel = require('./authcode')
 
-module.exports.getAccessToken = async (accessToken) => {
-    let _accessToken = await tokenModel.findOne({ accessToken: accessToken })
-        .populate('user')
-        .populate('client');
-    if (!_accessToken) {
-        return false;
-    }
-    _accessToken = _accessToken.toObject();
-    if (!_accessToken.user) {
-        _accessToken.user = {};
-    }
-    return _accessToken;
+var getAccessToken = function (token, callback) {
+    tokenModel.findOne({
+        accessToken: token
+    }).lean().exec((function (callback, err, token) {
+        if (!token) {
+            console.error('Token not found');
+        }
+        callback(err, token);
+    }).bind(null, callback));
 };
 
-module.exports.getRefreshToken = (refreshToken) => {
-    return tokenModel.findOne({ refreshToken: refreshToken })
-        .populate('user')
-        .populate('client');
+var getClient = function (clientId, clientSecret, callback) {
+    clientModel.findOne({
+        clientId: clientId,
+        clientSecret: clientSecret
+    }).lean().exec((function (callback, err, client) {
+        if (!client) {
+            console.error('Client not found');
+        }
+        callback(err, client);
+    }).bind(null, callback));
 };
 
-module.exports.getAuthorizationCode = (code) => {
-    return authCodeModel.findOne({ authorizationCode: code })
-        .populate('user')
-        .populate('client');
+var saveToken = function (token, client, user, callback) {
+    token.client = {
+        id: client.clientId
+    };
+    token.user = {
+        username: user.username
+    };
+    var tokenInstance = new tokenModel(token);
+    tokenInstance.save((function (callback, err, token) {
+        if (!token) {
+            console.error('Token not saved');
+        } else {
+            token = token.toObject();
+            delete token._id;
+            delete token.__v;
+        }
+        callback(err, token);
+    }).bind(null, callback));
 };
 
-module.exports.getClient = (clientId, clientSecret) => {
-    let params = { clientId: clientId };
-    if (clientSecret) {
-        params.clientSecret = clientSecret;
-    }
-    return clientModel.findOne(params);
+/*
+ * Method used only by password grant type.
+ */
+
+var getUser = function (username, password, callback) {
+
+    userModel.findOne({
+        username: username,
+        password: password
+    }).lean().exec((function (callback, err, user) {
+
+        if (!user) {
+            console.error('User not found');
+        }
+
+        callback(err, user);
+    }).bind(null, callback));
 };
 
-module.exports.getUser = async (username, password) => {
-    let user = await userModel.findOne({ username: username });
-    if (user.validatePassword(password)) {
-        return user;
-    }
-    return false;
+/*
+ * Method used only by client_credentials grant type.
+ */
+
+var getUserFromClient = function (client, callback) {
+
+    clientModel.findOne({
+        clientId: client.clientId,
+        clientSecret: client.clientSecret,
+        grants: 'client_credentials'
+    }).lean().exec((function (callback, err, client) {
+
+        if (!client) {
+            console.error('Client not found');
+        }
+
+        callback(err, {
+            username: ''
+        });
+    }).bind(null, callback));
 };
 
-module.exports.getUserFromClient = (client) => {
-    // return userModel.findById(client.user);
-    return {};
+/*
+ * Methods used only by refresh_token grant type.
+ */
+
+var getRefreshToken = function (refreshToken, callback) {
+
+    tokenModel.findOne({
+        refreshToken: refreshToken
+    }).lean().exec((function (callback, err, token) {
+
+        if (!token) {
+            console.error('Token not found');
+        }
+
+        callback(err, token);
+    }).bind(null, callback));
 };
 
-module.exports.saveToken = async (token, client, user) => {
-    let accessToken = (await tokenModel.create({
-        user: user.id || null,
-        client: client.id,
-        accessToken: token.accessToken,
-        accessTokenExpiresAt: token.accessTokenExpiresAt,
-        refreshToken: token.refreshToken,
-        refreshTokenExpiresAt: token.refreshTokenExpiresAt,
-        scope: token.scope,
-    })).toObject();
+var revokeToken = function (token, callback) {
 
-    if (!accessToken.user) {
-        accessToken.user = {};
-    }
+    tokenModel.deleteOne({
+        refreshToken: token.refreshToken
+    }).exec((function (callback, err, results) {
 
-    return accessToken;
+        var deleteSuccess = results && results.deletedCount === 1;
+
+        if (!deleteSuccess) {
+            console.error('Token not deleted');
+        }
+
+        callback(err, deleteSuccess);
+    }).bind(null, callback));
 };
 
-module.exports.saveAuthorizationCode = (code, client, user) => {
-    let authCode = new authCodeModel({
-        user: user.id,
-        client: client.id,
-        authorizationCode: code.authorizationCode,
-        expiresAt: code.expiresAt,
-        scope: code.scope
-    });
-    return authCode.save();
-};
-
-module.exports.revokeToken = async (accessToken) => {
-    let result = await tokenModel.deleteOne({
-        refreshToken: accessToken.refreshToken
-    });
-    return result.deletedCount > 0;
-};
-
-module.exports.revokeAuthorizationCode = async (code) => {
-    let result = await authCodeModel.deleteOne({
-        authorizationCode: code.authorizationCode
-    });
-    return result.deletedCount > 0;
+module.exports = {
+    getAccessToken: getAccessToken,
+    getClient: getClient,
+    saveToken: saveToken,
+    getUser: getUser,
+    getUserFromClient: getUserFromClient,
+    getRefreshToken: getRefreshToken,
+    revokeToken: revokeToken
 };

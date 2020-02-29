@@ -1,11 +1,9 @@
-const OAuthServer = require('express-oauth-server')
+// const OAuthServer = require('express-oauth-server')
+const OAuth2Server = require('oauth2-server')
 const oAuthModel = require('./../models/auth')
 
-module.exports = new OAuthServer({
+module.exports = new OAuth2Server({
     model: oAuthModel,
-    // grants: ['authorization_code', 'refresh_token'],
-    // allowEmptyState: true,
-    // allowExtendedTokenAttributes: true,
-    useErrorHandler: true,
-    debug: true
+    accessTokenLifetime: 60 * 60,
+    allowBearerTokensInQueryString: true
 })
