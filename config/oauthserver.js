@@ -1,4 +1,3 @@
-// const OAuthServer = require('express-oauth-server')
 const OAuth2Server = require('oauth2-server')
 const oAuthModel = require('./../models/auth')
 
