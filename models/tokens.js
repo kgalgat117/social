@@ -2,7 +2,7 @@ var mongoose = require('mongoose')
 var DB = require('../config/db')
 
 var schema = new mongoose.Schema({
-    accessToken: String,
+	accessToken: String,
 	accessTokenExpiresAt: Date,
 	refreshToken: String,
 	refreshTokenExpiresAt: Date,
