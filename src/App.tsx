@@ -1,8 +1,28 @@
-import React, { useState } from 'react';
+import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { Button } from 'reactstrap';
+import { userSignUp } from './services/Congnito.service.';
+
+// let cognitoService: CognitoService
 
 function App() {
+
+  const createUser = () => {
+    let data = {
+      username: 'kgalgat117',
+      password: 'Password#123',
+      email: 'kgalgat117@gmail.com',
+      phone_number: '+15555555555'
+    }
+    // CognitoService
+    userSignUp(data).then(result => {
+      console.log(result)
+    }, error => {
+      console.log(error)
+    })
+  }
+
   return (
     <div className="App">
       <header className="App-header">
@@ -10,14 +30,7 @@ function App() {
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <Button onClick={createUser}>create User</Button>
       </header>
     </div>
   );
