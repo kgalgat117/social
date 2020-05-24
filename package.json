@@ -8,11 +8,13 @@
     "webpack": "webpack --config webpack.config.ts"
   },
   "dependencies": {
+    "@types/mongoose": "^5.7.21",
     "@types/morgan": "^1.9.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.16.4",
     "helmet": "^3.22.0",
+    "mongoose": "^5.9.15",
     "morgan": "^1.10.0"
   },
   "devDependencies": {
