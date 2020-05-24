@@ -13,13 +13,16 @@ if (!process.env.PORT) {
 const PORT: number = parseInt(process.env.PORT as string, 10);
 
 const app = express();
+connect()
 
 app.use(logger('dev'));
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
-connect()
+import { usersRouter } from './users/users.router'
+
+app.use("/users", usersRouter);
 
 const server = app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`);
