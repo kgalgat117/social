@@ -1,5 +1,5 @@
 import { Document, Model } from "mongoose";
-import { Phone } from '../properties/phone.interface'
+import { Phone } from '../properties/properties.interface'
 
 export interface IUser {
     firstName: string;
