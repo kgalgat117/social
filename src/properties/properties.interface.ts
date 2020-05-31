@@ -12,5 +12,16 @@ export interface SendMailParameters {
 export interface ErrorResponse {
     status: number,
     message: string,
+    code: number,
     flag: boolean
+}
+
+export interface CachedUserOTPArray extends Array<Object> {
+    [key: number]: CachedUserOTP
+}
+
+export interface CachedUserOTP {
+    user: string,
+    otp: number,
+    expires_in: Date
 }

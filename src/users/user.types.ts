@@ -8,8 +8,12 @@ export interface IUser {
     primaryEmail: string;
     bio: string;
     profileImage: string;
-    createdOn?: Date;
-    updatedOn?: Date;
+    dateOfBirth: string;
+    gender: string;
+    showMe: String;
+    sexualOrientation: String;
+    profileCompletedPercentage: number;
+    profileStatus: string;
 }
 
 export interface IUserDocument extends IUser, Document {

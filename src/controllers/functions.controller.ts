@@ -15,8 +15,6 @@ var transport = nodemailer.createTransport({
     }
 })
 
-var chachedUserOTP = []
-
 export const sendMail = function (parameters: SendMailParameters): Promise<Object> {
     return transport.sendMail({
         from: CONSTANTS.NODEMAILER_OUTLOOK_USERNAME,
@@ -24,8 +22,4 @@ export const sendMail = function (parameters: SendMailParameters): Promise<Objec
         subject: parameters.to,
         text: parameters.text
     });
-}
-
-export const generateOTP = function (): number {
-    return Math.floor(100000 + Math.random() * 900000)
 }

@@ -12,6 +12,19 @@ const UserSchema = new Schema({
         },
         unique: true
     },
+    dateOfBirth: {
+        type: String
+    },
+    gender: {
+        type: String
+    },
+    sexualOrientation: {
+        type: String
+    },
+    showMe: {
+        type: String,
+        enum: ['Men', 'Women', 'Everyone']
+    },
     profileImage: String,
     profileCompletedPercentage: {
         type: Number,
@@ -21,15 +34,7 @@ const UserSchema = new Schema({
         type: String,
         enum: ['active', 'inactive', 'deleted'],
         default: 'inactive'
-    },
-    createdOn: {
-        type: Date,
-        default: new Date()
-    },
-    updatedOn: {
-        type: Date,
-        default: new Date()
     }
-});
+}, { timestamps: true });
 
 export default UserSchema;

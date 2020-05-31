@@ -21,6 +21,7 @@ export const connect = () => {
     DB.on("error", () => {
         console.log("Error connecting to database");
     });
+
 };
 
 export { DB }
