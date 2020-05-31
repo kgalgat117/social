@@ -25,3 +25,8 @@ export interface CachedUserOTP {
     otp: number,
     expires_in: Date
 }
+
+export interface PayloadData {
+    user: string,
+    sessionId: string
+}

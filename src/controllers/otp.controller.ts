@@ -1,7 +1,7 @@
 import { CachedUserOTPArray, CachedUserOTP } from './../properties/properties.interface'
 import { IUserDocument } from './../users/user.types'
 
-var cachedUserOTPArray: CachedUserOTPArray;
+var cachedUserOTPArray: CachedUserOTPArray = [];
 
 export const generateOTP = function (): number {
     return Math.floor(100000 + Math.random() * 900000)
