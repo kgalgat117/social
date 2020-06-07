@@ -2,16 +2,18 @@ import { Schema, Mongoose } from "mongoose";
 
 const SessionSchema = new Schema({
     user: {
-        type: String
+        type: String,
+        required: true
     },
     status: {
         type: String,
-        enum: ['active', 'inactive']
+        enum: ['active', 'inactive'],
+        default: 'active'
     },
     tokenType: {
         type: String,
         enum: ['accessToken', 'refreshToken'],
-        default: 'active'
+        required: true
     }
 }, { timestamps: true });
 
